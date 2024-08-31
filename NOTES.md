@@ -4,7 +4,7 @@ This repository will be used for learning about how docker is used in the AI wor
 TODO:
 - [x] Task 1 -  Set up a basic Python environment in Docker. Create a Dockerfile that installs Python and some common ML libraries like numpy, pandas, and scikit-learn.
 - [x] Task 2 - Build a Docker image that runs a basic ML script to train a model on a dataset like Iris. Use scikit-learn to train and evaluate a simple classification model.
-- [] Peraonsl Task - Create a Pytorch image and training script to take in variable hyperparamters and input data
+- [x] Peraonsl Task - Create a basic image and training script to take in variable hyperparamters and input data
 - [] Task 3 - Modify your previous project to save the trained model and logs to a volume so that data is retained even after the container stops.
 - [] Task 4 -  Create a simple ML pipeline with multiple services. For example, one container for data preprocessing, another for model training, and a third for serving the model.
 - [] Task 5 - Use Docker Swarm or Kubernetes to set up a distributed training environment for a more complex model like ResNet on a dataset like CIFAR-10. Experiment with frameworks like TensorFlow or PyTorch that support distributed training.
