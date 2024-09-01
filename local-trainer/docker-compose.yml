@@ -1,0 +1,20 @@
+
+services:
+  ml_service:
+    image: python:3.10-slim
+    volumes:
+      - /Users/erickkbentz/workplace/docker-ml-learning/local-trainer/output/model:/opt/ml/model
+      - /Users/erickkbentz/workplace/docker-ml-learning/local-trainer/output/data:/opt/ml/data
+      - /Users/erickkbentz/workplace/docker-ml-learning/local-trainer/data:/opt/ml/input/test
+      - /Users/erickkbentz/workplace/docker-ml-learning/local-trainer/src:/opt/ml/code
+
+    working_dir: /opt/ml/code
+    environment:
+      - MODEL_OUTPUT_PATH=/opt/ml/model
+      - DATA_OUTPUT_PATH=/opt/ml/data
+      - INPUT_DATA_TEST=/opt/ml/input/test
+
+    command: 
+      - /bin/bash
+      - -c
+      - pip install -r requirements.txt && python train.py --data_path $$INPUT_DATA_TEST/titanic_processed.csv
