@@ -45,7 +45,7 @@ class SourceCodeConfig:
         command (str): The command used to initiate training in the container within the source code directory.
             Outputs artifacts from your training scripts should be saved to the following:
                 - "/opt/ml/model/" or os.enviorn["MODEL_OUTPUT_PATH"] for model artifacts
-                - "/opt/ml/data/" or os.enviornm["DATA_OUTPUT_PATH"] for other artifacts
+                - "/opt/ml/data/" or os.enviorn["DATA_OUTPUT_PATH"] for other artifacts
 
     """
     source_code_dir: Optional[str] = None

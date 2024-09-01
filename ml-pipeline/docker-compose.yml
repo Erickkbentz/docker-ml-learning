@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  preprocessing:
+    image: python:3.10-slim
+    volumes:
+      - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/src:/opt/ml/code
+    working_dir: /opt/ml/code
+    command: /bin/bash -c 'pip install -r requirements.txt && python preprocessing/process.py'
+  training:
+    image: python:3.10-slim
+    volumes:
+      - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/src:/opt/ml/code
+    working_dir: /opt/ml/code
+    command: /bin/bash -c 'pip install -r requirements.txt && python training/train.py'
+    depends_on:
+      - preprocessing
+  serving:
+    image: python:3.10-slim
+    ports:
+      - 8080:8080
+    volumes:
+      - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/src:/opt/ml/code
+    working_dir: /opt/ml/code
+    command: /bin/bash -c 'pip install -r requirements.txt && python serving/serve.py'
+    depends_on:
+      - training

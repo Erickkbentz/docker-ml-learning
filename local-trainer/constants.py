@@ -2,7 +2,7 @@ DOCKER_COMPOSE_FILE_NAME = 'docker-compose.yml'
 
 DOCKER_COMPOSE_FILE_TEMPLATE = """
 services:
-  ml_service:
+  training:
     image: {image}
     volumes:
 {volumes}
