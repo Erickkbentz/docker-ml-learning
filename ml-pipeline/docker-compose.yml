@@ -1,26 +1,28 @@
 version: '3.8'
 services:
   preprocessing:
-    image: python:3.10-slim
+    image: tensorflow/tensorflow:latest
     volumes:
       - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/src:/opt/ml/code
     working_dir: /opt/ml/code
-    command: /bin/bash -c 'pip install -r requirements.txt && python preprocessing/process.py'
+    command: /bin/bash -c 'pip install --no-cache-dir -r requirements.txt && python preprocessing/process.py'
   training:
-    image: python:3.10-slim
+    image: tensorflow/tensorflow:latest
     volumes:
+      - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/output:/output
       - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/src:/opt/ml/code
     working_dir: /opt/ml/code
-    command: /bin/bash -c 'pip install -r requirements.txt && python training/train.py'
+    command: /bin/bash -c 'pip install --no-cache-dir -r requirements.txt && python training/train.py --input_path /data/training_data.csv --output_path /output'
     depends_on:
       - preprocessing
   serving:
-    image: python:3.10-slim
+    image: tensorflow/tensorflow:latest
     ports:
       - 8080:8080
     volumes:
+      - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/output:/output
       - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/src:/opt/ml/code
     working_dir: /opt/ml/code
-    command: /bin/bash -c 'pip install -r requirements.txt && python serving/serve.py'
+    command: /bin/bash -c 'pip install --no-cache-dir -r requirements.txt && python serving/serve.py --model_path /output/cnn_model.h5'
     depends_on:
       - training

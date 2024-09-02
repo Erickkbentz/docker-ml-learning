@@ -78,7 +78,8 @@ class DockerComposeService:
             networks: Optional[List[str]] = None,
             depends_on: Optional[List[str]] = None,
             restart: Optional[str] = None,
-            health_check: Optional[HealthCheck] = None
+            health_check: Optional[HealthCheck] = None,
+            detach_on_build: Optional[bool] = False,
     ):
         self.service_name = service_name
         self.image = image
@@ -93,6 +94,7 @@ class DockerComposeService:
         self.depends_on = depends_on
         self.restart = restart
         self.health_check = health_check
+        self.detach_on_build = detach_on_build
 
 
     def to_dict(self):
@@ -178,12 +180,14 @@ class DockerComposeClient:
         return remove_empty_lines(compose_file)
 
 
-    def compose_up(self, compose_file: str = DOCKER_COMPOSE_FILE_NAME, args: str = ""):
+    def compose_up(self, compose_file: str = DOCKER_COMPOSE_FILE_NAME, args: str = "", services: List[str] = []):
         self.create_compose_file()
 
         command = ["docker-compose", "-f", compose_file, "up"]
         if args:
             command.extend(args.split())
+        if services:
+            command.extend(services)
         print(f"Running command: {command}")
         
         result = subprocess.run(command, capture_output=True, text=True)
@@ -192,3 +196,9 @@ class DockerComposeClient:
         else:
             print(result.stdout)
         return result.returncode
+
+    def follow_logs(self, services: List[str]):
+        command = ["docker-compose", "-f", DOCKER_COMPOSE_FILE_NAME, "logs", "-f"]
+        command.extend(services)
+        print(f"Running command: {command}")
+        subprocess.run(command)
