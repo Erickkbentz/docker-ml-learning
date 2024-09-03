@@ -1,4 +1,5 @@
 numpy
 pandas
 flask
-tensorflow
+joblib
+blinker==1.4

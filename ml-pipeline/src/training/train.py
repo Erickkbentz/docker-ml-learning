@@ -1,6 +1,5 @@
 import os
 import argparse
-import pandas as pd
 import numpy as np
 
 import tensorflow as tf
@@ -12,36 +11,19 @@ def main(args):
     
     # Load preprocessed data
     try:
-        df = pd.read_csv(args.input_path)
+        data = np.load(args.input_path)
+        x_train = data['x_train']
+        y_train = data['y_train']
+        x_test = data['x_test']
+        y_test = data['y_test']
         print(f"Loaded data from {args.input_path}")
     except FileNotFoundError:
         print(f"File not found: {args.input_path}")
         raise
 
-    # Separate features and labels
-    X = df.iloc[:, :-1].values
-    y = df['label'].values
-
-    # Reshape features to original image dimensions (32x32x3)
-    X = X.reshape(-1, 32, 32, 3)
-
-    # Normalize pixel values (ensure it's in the correct range)
-    X = X.astype('float32') / 255.0
-
     # Convert labels to one-hot encoding
-    y = to_categorical(y, 10)
-
-    # Manually split dataset
-    num_samples = X.shape[0]
-    indices = np.arange(num_samples)
-    np.random.shuffle(indices)
-
-    split_index = int(num_samples * 0.8)
-    train_indices = indices[:split_index]
-    test_indices = indices[split_index:]
-
-    x_train, x_test = X[train_indices], X[test_indices]
-    y_train, y_test = y[train_indices], y[test_indices]
+    y_train = to_categorical(y_train, 10)
+    y_test = to_categorical(y_test, 10)
 
     # Define CNN model
     model = Sequential([
@@ -72,8 +54,9 @@ def main(args):
     print(f"Model saved to {save_path}!")
 
 if __name__ == "__main__":
+    print("Starting training script...")
     parser = argparse.ArgumentParser(description='Train a Sequential model on the dataset.')
-    parser.add_argument('--input_path', type=str, required=True, help='Path to the dataset CSV file.')
+    parser.add_argument('--input_path', type=str, required=True, help='Path to the dataset NPZ file.')
     parser.add_argument('--output_path', type=str, default=os.path.join(os.getcwd(), "cnn_model.h5"), help='Output file path.')
     parser.add_argument('--epochs', type=int, default=10, help='Number of epochs.')
     parser.add_argument('--batch_size', type=int, default=64, help='Batch size.')

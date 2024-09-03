@@ -33,6 +33,7 @@ def predict():
 
 
 if __name__ == '__main__':
+    print("Starting server...")
     parser = argparse.ArgumentParser(description='Serve the trained model.')
     parser.add_argument('--model_path', type=str, default=os.path.join(os.getcwd(), "cnn_mode.h5"), help='Path to the trained model.')
     parser.add_argument('--port', type=int, default=5000, help='Port to run the server on.')

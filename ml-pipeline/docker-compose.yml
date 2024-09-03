@@ -1,28 +1,34 @@
-version: '3.8'
 services:
   preprocessing:
-    image: tensorflow/tensorflow:latest
+    image: chand1012/tensorflow:2.5.0
     volumes:
+      - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/data:/data
       - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/src:/opt/ml/code
     working_dir: /opt/ml/code
-    command: /bin/bash -c 'pip install --no-cache-dir -r requirements.txt && python preprocessing/process.py'
+    entrypoint: /bin/bash
+    command: -c 'pip install --no-cache-dir -r /opt/ml/code/requirements.txt && python preprocessing/process.py --output_path /data --fraction 0.5'
   training:
-    image: tensorflow/tensorflow:latest
+    image: chand1012/tensorflow:2.5.0
     volumes:
       - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/output:/output
+      - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/data:/data
       - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/src:/opt/ml/code
     working_dir: /opt/ml/code
-    command: /bin/bash -c 'pip install --no-cache-dir -r requirements.txt && python training/train.py --input_path /data/training_data.csv --output_path /output'
+    entrypoint: /bin/bash
+    command: -c 'pip install --no-cache-dir -r /opt/ml/code/requirements.txt && python training/train.py --input_path /data/training_data.npz --output_path /output'
     depends_on:
-      - preprocessing
+      preprocessing:
+        condition: service_completed_successfully
   serving:
-    image: tensorflow/tensorflow:latest
+    image: chand1012/tensorflow:2.5.0
     ports:
       - 8080:8080
     volumes:
       - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/output:/output
       - /Users/erickkbentz/workplace/docker-ml-learning/ml-pipeline/src:/opt/ml/code
     working_dir: /opt/ml/code
-    command: /bin/bash -c 'pip install --no-cache-dir -r requirements.txt && python serving/serve.py --model_path /output/cnn_model.h5'
+    entrypoint: /bin/bash
+    command: -c 'pip install --no-cache-dir -r /opt/ml/code/requirements.txt && python serving/serve.py --model_path /output/cnn_model.h5'
     depends_on:
-      - training
+      training:
+        condition: service_completed_successfully
